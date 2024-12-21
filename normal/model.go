@@ -14,11 +14,11 @@ func New(width, height int) tea.Model {
 	return &model{width, height}
 }
 
-func (m *model) Init() tea.Cmd {
+func (m model) Init() tea.Cmd {
 	return nil
 }
 
-func (m *model) View() string {
+func (m model) View() string {
 	return lipgloss.NewStyle().
 		Height(m.height).
 		Width(m.width).
@@ -26,7 +26,7 @@ func (m *model) View() string {
 		Render(strconv.Itoa(m.width))
 }
 
-func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.width = msg.Width

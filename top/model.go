@@ -8,7 +8,7 @@ import (
 )
 
 type model struct {
-	current page.Page
+	current *page.Page
 	width   int
 	height  int
 }
@@ -18,7 +18,7 @@ func newModel() model {
 
 	nm := normal.New(m.width, m.height)
 	p := page.New("normal", nm)
-	m.current = *p
+	m.current = p
 	return m
 }
 
