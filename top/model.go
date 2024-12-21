@@ -52,12 +52,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c", "q":
 			return m, tea.Quit
 		default:
-			m.Current.Update(msg)
+			cmd := m.Current.Update(msg)
+			return m, cmd
 		}
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
 		m.height = msg.Height
 		m.recalculateContentSize()
+	default:
+		cmd := m.Current.Update(msg)
+		return m, cmd
 	}
 
 	return m, nil

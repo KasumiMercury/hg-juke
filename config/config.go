@@ -32,3 +32,7 @@ func Load() (bool, error) {
 
 	return true, nil
 }
+
+func Set(key string, value interface{}) {
+	viper.Set(key, value)
+}

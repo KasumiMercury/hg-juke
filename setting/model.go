@@ -5,6 +5,7 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"hg-juke/config"
 )
 
 var (
@@ -21,6 +22,7 @@ type Model struct {
 	width, height int
 	focusIndex    int
 	inputs        []textinput.Model
+	miss          bool
 }
 
 func (m Model) Build(_ string, width, height int) (tea.Model, error) {
@@ -52,6 +54,8 @@ func (m Model) Build(_ string, width, height int) (tea.Model, error) {
 	return &m, nil
 }
 
+type missField struct{}
+
 func (m Model) Init() tea.Cmd {
 	return textinput.Blink
 }
@@ -66,11 +70,19 @@ func (m *Model) View() string {
 
 	inputs := lipgloss.JoinVertical(lipgloss.Left, elms...)
 
+	cmps := make([]string, 0, 3)
+	if m.miss {
+		cmps = append(cmps, lipgloss.NewStyle().Foreground(lipgloss.Color("9")).Render("All inputs must be filled"))
+	}
+
+	cmps = append(cmps, inputs)
+
 	button := blurredButton
 	if m.focusIndex == len(m.inputs) {
 		button = focusedButton
 	}
-	panel := lipgloss.JoinVertical(lipgloss.Center, inputs, lipgloss.NewStyle().Padding(1, 2).Render(button))
+	cmps = append(cmps, lipgloss.NewStyle().Padding(1, 2).Render(button))
+	panel := lipgloss.JoinVertical(lipgloss.Center, cmps...)
 
 	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, panel)
 }
@@ -80,12 +92,14 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
 		m.height = msg.Height
+	case missField:
+		m.miss = true
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "tab", "shift+tab", "enter", "up", "down":
 			s := msg.String()
 			if s == "enter" && m.focusIndex == len(m.inputs) {
-				//	TODO: subbmit
+				return m, m.submit
 			}
 
 			if s == "up" || s == "shift+tab" {
@@ -131,4 +145,24 @@ func (m *Model) updateInputs(msg tea.Msg) tea.Cmd {
 	}
 
 	return tea.Batch(cmds...)
+}
+
+func (m Model) submit() tea.Msg {
+	for i, input := range m.inputs {
+		v := input.Value()
+		if v == "" {
+			return missField{}
+		}
+
+		switch i {
+		case 0:
+			config.Set("SpotifyClientID", v)
+		case 1:
+			config.Set("SpotifyClientSecret", v)
+		case 2:
+			config.Set("MisskeyAPIKey", v)
+		}
+	}
+
+	return nil
 }
