@@ -3,15 +3,22 @@ package top
 import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"hg-juke/normal"
+	"hg-juke/page"
 )
 
 type model struct {
-	width  int
-	height int
+	current page.Page
+	width   int
+	height  int
 }
 
 func newModel() model {
-	return model{}
+	nm := normal.New(100, 5)
+	p := page.New("normal", nm)
+	return model{
+		current: *p,
+	}
 }
 
 func (m model) Init() tea.Cmd {
@@ -48,11 +55,7 @@ func (m model) View() string {
 		Border(lipgloss.NormalBorder(), true, false, false, false).
 		Render("footer")
 
-	content := lipgloss.NewStyle().
-		Align(lipgloss.Center).
-		Width(m.width).
-		Height(m.height - lipgloss.Height(header) - lipgloss.Height(footer)).
-		Render()
+	content := m.current.View()
 
 	display := lipgloss.JoinVertical(lipgloss.Top, header, content, footer)
 

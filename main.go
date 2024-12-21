@@ -32,7 +32,7 @@ func main() {
 	if !confExist {
 		fmt.Println("config file not exists, create config file")
 		// TODO: initialize sequence
-		return
+		//return
 	}
 
 	top.Start()
