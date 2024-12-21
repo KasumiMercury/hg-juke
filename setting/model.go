@@ -60,13 +60,19 @@ func (m *Model) View() string {
 	elms := make([]string, len(m.inputs))
 
 	for i := range m.inputs {
-		elm := m.inputs[i].View()
+		elm := lipgloss.NewStyle().Padding(1, 2).Render(m.inputs[i].View())
 		elms[i] = elm
 	}
 
-	panel := lipgloss.JoinVertical(lipgloss.Left, elms...)
+	inputs := lipgloss.JoinVertical(lipgloss.Left, elms...)
 
-	return lipgloss.NewStyle().Width(m.width).Height(m.height).Align(lipgloss.Center).Render(panel)
+	button := blurredButton
+	if m.focusIndex == len(m.inputs) {
+		button = focusedButton
+	}
+	panel := lipgloss.JoinVertical(lipgloss.Center, inputs, lipgloss.NewStyle().Padding(1, 2).Render(button))
+
+	return lipgloss.Place(m.width, m.height, lipgloss.Center, lipgloss.Center, panel)
 }
 
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
