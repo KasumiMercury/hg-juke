@@ -5,20 +5,28 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"hg-juke/normal"
 	"hg-juke/page"
+	"log"
 )
 
 type model struct {
-	current *page.Page
-	width   int
-	height  int
+	*Router
+	width, height int
 }
 
 func newModel() model {
-	m := model{}
+	m := model{
+		NewRouter(),
+		0,
+		0,
+	}
 
-	nm := normal.New(m.width, m.height)
-	p := page.New("normal", nm)
-	m.current = p
+	m.SetBuilder(page.Normal, normal.New())
+	err := m.SetPage(page.Normal, "", "top")
+	if err != nil {
+		log.Fatal(err)
+		return model{}
+	}
+
 	return m
 }
 
@@ -58,7 +66,7 @@ func (m model) View() string {
 	content := lipgloss.NewStyle().
 		Height(m.contentHeight()).
 		Width(m.contentWidth()).
-		Render(m.current.View())
+		Render(m.Current.View())
 
 	display := lipgloss.JoinVertical(lipgloss.Top, header, content, footer)
 
@@ -68,7 +76,10 @@ func (m model) View() string {
 func (m model) recalculateContentSize() {
 	w := m.contentWidth()
 	h := m.contentHeight()
-	_ = m.current.Update(tea.WindowSizeMsg{
+	m.Router.width = w
+	m.Router.height = h
+
+	_ = m.Current.Update(tea.WindowSizeMsg{
 		Width:  w,
 		Height: h,
 	})
