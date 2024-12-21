@@ -10,10 +10,6 @@ type Model struct {
 	width, height int
 }
 
-func New() Model {
-	return Model{}
-}
-
 func (m Model) Build(_ string, width, height int) (tea.Model, error) {
 	return &Model{width, height}, nil
 }

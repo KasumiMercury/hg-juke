@@ -21,8 +21,8 @@ func newTop(isInitial bool) model {
 		0,
 	}
 
-	m.SetBuilder(page.Normal, normal.New())
-	m.SetBuilder(page.Setting, setting.New())
+	m.SetBuilder(page.Normal, normal.Model{})
+	m.SetBuilder(page.Setting, setting.Model{})
 
 	first := page.Normal
 	title := ""
@@ -51,6 +51,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "ctrl+c", "q":
 			return m, tea.Quit
+		default:
+			m.Current.Update(msg)
 		}
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
