@@ -1,9 +1,14 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"hg-juke/config"
 	"log"
+	"log/slog"
+	"os"
 )
 
 type model struct {
@@ -56,6 +61,30 @@ func (m model) View() string {
 }
 
 func main() {
+	logLevel := new(slog.LevelVar)
+	logOpts := slog.HandlerOptions{
+		Level: logLevel,
+	}
+
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &logOpts))
+	slog.SetDefault(logger)
+
+	isDebug := flag.Bool("debug", false, "debug mode")
+	flag.Parse()
+	if isDebug != nil && *isDebug {
+		logLevel.Set(slog.LevelDebug)
+	}
+
+	confExist, err := config.Load()
+	if err != nil {
+		log.Fatal(err)
+	}
+	if !confExist {
+		fmt.Println("config file not exists, create config file")
+		// TODO: initialize sequence
+		return
+	}
+
 	p := tea.NewProgram(model{}, tea.WithAltScreen())
 
 	if _, err := p.Run(); err != nil {
