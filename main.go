@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"hg-juke/config"
 	"hg-juke/top"
 	"log"
@@ -29,11 +28,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if !confExist {
-		fmt.Println("config file not exists, create config file")
-		// TODO: initialize sequence
-		//return
-	}
 
-	top.Start()
+	isInitial := !confExist
+
+	top.Start(isInitial)
 }

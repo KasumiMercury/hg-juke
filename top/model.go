@@ -5,6 +5,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"hg-juke/normal"
 	"hg-juke/page"
+	"hg-juke/setting"
 	"log"
 )
 
@@ -13,7 +14,7 @@ type model struct {
 	width, height int
 }
 
-func newModel() model {
+func newTop(isInitial bool) model {
 	m := model{
 		NewRouter(),
 		0,
@@ -21,7 +22,17 @@ func newModel() model {
 	}
 
 	m.SetBuilder(page.Normal, normal.New())
-	err := m.SetPage(page.Normal, "", "top")
+	m.SetBuilder(page.Setting, setting.New())
+
+	first := page.Normal
+	title := ""
+
+	if isInitial {
+		first = page.Setting
+		title = "initial"
+	}
+
+	err := m.SetPage(first, "", title)
 	if err != nil {
 		log.Fatal(err)
 		return model{}

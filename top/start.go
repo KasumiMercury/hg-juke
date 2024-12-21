@@ -5,8 +5,8 @@ import (
 	"log"
 )
 
-func Start() {
-	m := newModel()
+func Start(isInitial bool) {
+	m := newTop(isInitial)
 	p := tea.NewProgram(m, tea.WithAltScreen())
 
 	if _, err := p.Run(); err != nil {
