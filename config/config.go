@@ -19,7 +19,7 @@ func Load() (bool, error) {
 
 	confPath := filepath.Join(confDir, "hg-juke")
 	viper.AddConfigPath(confPath)
-	slog.Debug("Loading config file: %s", confPath)
+	slog.Debug("Loading config file", "path", confPath)
 
 	if err := viper.ReadInConfig(); err != nil {
 		var configFileNotFoundError viper.ConfigFileNotFoundError
