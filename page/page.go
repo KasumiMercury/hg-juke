@@ -14,12 +14,12 @@ func New(title string, model tea.Model) *Page {
 	}
 }
 
-func (p Page) Update(msg tea.Msg) tea.Cmd {
+func (p *Page) Update(msg tea.Msg) tea.Cmd {
 	m, cmd := p.model.Update(msg)
 	p.model = m
 	return cmd
 }
 
-func (p Page) View() string {
+func (p *Page) View() string {
 	return p.model.View()
 }

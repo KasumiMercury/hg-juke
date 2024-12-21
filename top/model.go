@@ -14,11 +14,12 @@ type model struct {
 }
 
 func newModel() model {
-	nm := normal.New(100, 5)
+	m := model{}
+
+	nm := normal.New(m.width, m.height)
 	p := page.New("normal", nm)
-	return model{
-		current: *p,
-	}
+	m.current = *p
+	return m
 }
 
 func (m model) Init() tea.Cmd {
@@ -35,6 +36,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
 		m.height = msg.Height
+		m.recalculateContentSize()
 	}
 
 	return m, nil
@@ -45,19 +47,36 @@ func (m model) View() string {
 		Align(lipgloss.Center).
 		Width(m.width).
 		Height(1).
-		Border(lipgloss.NormalBorder(), false, false, true, false).
 		Render("header")
 
 	footer := lipgloss.NewStyle().
 		Align(lipgloss.Center).
 		Width(m.width).
 		Height(1).
-		Border(lipgloss.NormalBorder(), true, false, false, false).
 		Render("footer")
 
-	content := m.current.View()
+	content := lipgloss.NewStyle().
+		Height(m.contentHeight()).
+		Width(m.contentWidth()).
+		Render(m.current.View())
 
 	display := lipgloss.JoinVertical(lipgloss.Top, header, content, footer)
 
 	return display
+}
+
+func (m model) recalculateContentSize() {
+	w := m.contentWidth()
+	h := m.contentHeight()
+	_ = m.current.Update(tea.WindowSizeMsg{
+		Width:  w,
+		Height: h,
+	})
+}
+
+func (m model) contentWidth() int {
+	return m.width
+}
+func (m model) contentHeight() int {
+	return m.height - 2
 }

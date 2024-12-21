@@ -3,6 +3,7 @@ package normal
 import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"strconv"
 )
 
 type model struct {
@@ -19,12 +20,17 @@ func (m model) Init() tea.Cmd {
 
 func (m model) View() string {
 	return lipgloss.NewStyle().
-		Align(lipgloss.Center).
 		Height(m.height).
 		Width(m.width).
-		Render("content")
+		Align(lipgloss.Center).
+		Render(strconv.Itoa(m.width))
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	return nil, nil
+	switch msg := msg.(type) {
+	case tea.WindowSizeMsg:
+		m.width = msg.Width
+		m.height = msg.Height
+	}
+	return m, nil
 }
