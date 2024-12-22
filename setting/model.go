@@ -6,6 +6,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"hg-juke/config"
+	"log"
 )
 
 var (
@@ -164,5 +165,11 @@ func (m Model) submit() tea.Msg {
 		}
 	}
 
-	return nil
+	if err := config.Write(); err != nil {
+		//TODO: handling error
+		log.Fatal(err)
+	}
+
+	// TODO: exit setting page
+	return tea.Quit()
 }
