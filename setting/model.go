@@ -6,6 +6,8 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"hg-juke/config"
+	"hg-juke/page"
+	"hg-juke/router"
 	"log"
 )
 
@@ -171,5 +173,10 @@ func (m Model) submit() tea.Msg {
 	}
 
 	// TODO: exit setting page
-	return tea.Quit()
+
+	msg := router.NewPageMsg{
+		PageType: page.Normal,
+		Title:    "top",
+	}
+	return msg
 }

@@ -5,18 +5,19 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"hg-juke/normal"
 	"hg-juke/page"
+	"hg-juke/router"
 	"hg-juke/setting"
 	"log"
 )
 
 type model struct {
-	*Router
+	*router.Router
 	width, height int
 }
 
 func newTop(isInitial bool) model {
 	m := model{
-		NewRouter(),
+		router.NewRouter(),
 		0,
 		0,
 	}
@@ -54,6 +55,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		default:
 			cmd := m.Current.Update(msg)
 			return m, cmd
+		}
+	case router.NewPageMsg:
+		if err := m.SetPage(msg.PageType, msg.Id, msg.Title); err != nil {
+			// TODO: handling error
+			log.Fatal(err)
 		}
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
@@ -93,8 +99,7 @@ func (m model) View() string {
 func (m model) recalculateContentSize() {
 	w := m.contentWidth()
 	h := m.contentHeight()
-	m.Router.width = w
-	m.Router.height = h
+	m.ChangeSize(w, h)
 
 	_ = m.Current.Update(tea.WindowSizeMsg{
 		Width:  w,

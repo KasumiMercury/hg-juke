@@ -1,4 +1,4 @@
-package top
+package router
 
 import (
 	"fmt"
@@ -40,4 +40,15 @@ func (r *Router) SetPage(pType page.Type, id string, title string) error {
 	r.Current = page.New(title, m)
 
 	return nil
+}
+
+func (r *Router) ChangeSize(width, height int) {
+	r.width = width
+	r.height = height
+}
+
+type NewPageMsg struct {
+	PageType page.Type
+	Id       string
+	Title    string
 }
