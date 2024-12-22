@@ -26,7 +26,7 @@ func newTop(isInitial bool) model {
 	m.SetBuilder(page.Setting, setting.Model{})
 
 	first := page.Normal
-	title := ""
+	title := "top"
 
 	if isInitial {
 		first = page.Setting
@@ -75,10 +75,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m model) View() string {
 	header := lipgloss.NewStyle().
-		Align(lipgloss.Center).
+		Align(lipgloss.Left).
 		Width(m.width).
 		Height(1).
-		Render("header")
+		Render(m.Current.Title())
 
 	footer := lipgloss.NewStyle().
 		Align(lipgloss.Center).

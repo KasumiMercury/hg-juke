@@ -23,3 +23,7 @@ func (p *Page) Update(msg tea.Msg) tea.Cmd {
 func (p *Page) View() string {
 	return p.model.View()
 }
+
+func (p *Page) Title() string {
+	return p.title
+}
